@@ -10,7 +10,7 @@ const userSchema = new Schema({
   last_name: String,
   email: {
     type: String,
-    unique: true, 
+    unique: true,
   },
   age: Number,
   password: String,
@@ -21,6 +21,16 @@ const userSchema = new Schema({
   role: {
     type: String,
     default: "USER",
+  },
+  documents: [
+    {
+      name: String,
+      reference: String,
+    },
+  ],
+  last_connection: {
+    type: Date,
+    default: Date.now,
   },
 });
 
@@ -33,7 +43,6 @@ userSchema.statics.encryptPassword = async (password) => {
 userSchema.statics.comparePassword = async (password, recivedPassword) => {
   return await bcrypt.compare(password, recivedPassword);
 };
-
 
 const userModel = mongoose.model(userCollection, userSchema);
 

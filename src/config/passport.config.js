@@ -23,6 +23,9 @@ const initializePassport = () => {
       },
       (req, username, password, done) => registerUser(req, username, password, done)
     )
+
+    
+
   );
 
   passport.use(

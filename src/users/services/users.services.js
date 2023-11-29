@@ -156,6 +156,16 @@ class UserServices {
       console.log(error);
     }
   };
+
+  updateLoginDate = async (id) => {
+    return await userModel.findByIdAndUpdate(
+      { _id: id },
+      {
+        $set: { last_connection: Date.now() },
+      },
+      { new: true }
+    );
+  };
 }
 
 const UserService = new UserServices();
