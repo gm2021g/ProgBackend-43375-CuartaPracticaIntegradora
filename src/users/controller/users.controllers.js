@@ -42,6 +42,7 @@ export const postLogin = (req, res) => {
   req.session.user = req.user;
 
   res.cookie(process.env.COOKIE_NAME, req.user.token).redirect("/products");
+  UserService.updateLoginDate(req.user._id);
 };
 
 export const getCurrentUser = (req, res) => {
