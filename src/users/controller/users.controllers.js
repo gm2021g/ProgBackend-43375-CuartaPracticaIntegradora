@@ -195,3 +195,35 @@ export const changeUserRole = async (req, res) => {
     });
   }
 };
+
+export const uploadDocument = async (req, res) => {
+  try {
+    const { uid } = req.params;
+
+    if (!req.files)
+      return res.status(404).send({ message: "SOMETHING WENT WRONG" });
+
+    const filesValues = Object.values(req.files);
+
+    filesValues.map(async (arrayOfFiles) => {
+      return arrayOfFiles.map(async (file) => {
+        const newDocument = {
+          name: file.originalname,
+          reference: file.path,
+        };
+
+        await UserService.updateUpload(uid, newDocument);
+
+        return;
+      });
+    });
+
+    res.status(200).send({
+      message: `Document succesfully upload`,
+    });
+  } catch (error) {
+    req.logger.error(error);
+
+    return res.status(404).send({ message: "SOMETHING WENT WRONG" });
+  }
+};

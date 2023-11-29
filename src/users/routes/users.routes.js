@@ -1,5 +1,6 @@
 import express from "express";
 import passport from "passport";
+import upload from "../../utils/multer.js";
 import {
   getLogin,
   getLogout,
@@ -10,7 +11,8 @@ import {
   postRestore,
   getRestoreForm,
   postRestoreForm,
-  changeUserRole
+  changeUserRole,
+  uploadDocument,
 } from "../controller/users.controllers.js";
 
 const Router = express.Router();
@@ -43,40 +45,14 @@ Router.get("/restoreForm/:uid/:token", getRestoreForm);
 
 Router.post("/restoreForm/:uid/:token", postRestoreForm);
 
-export default Router;
-
-
-
-/*
-import express from "express";
-import passport from "passport";
-import {
-  getLogin,
-  getLogout,
-  getRegister,
-  postLogin,
-  postRegister,
-} from "../controller/users.controllers.js";
-
-const Router = express.Router();
-
-Router.get("/register", getRegister);
-
-Router.get("/login", getLogin);
-
 Router.post(
-  "/register",
-  passport.authenticate("register", { failureRedirect: "/error" }),
-  postRegister
+  "/:uid/documents",
+  upload.fields([
+    { name: "documents", maxCount: 3 },
+    { name: "profiles", maxCount: 1 },
+    { name: "products", maxCount: 10 },
+  ]),
+  uploadDocument
 );
 
-Router.post(
-  "/login",
-  passport.authenticate("login", { failureRedirect: "/error" }),
-  postLogin
-);
-
-Router.get("/logout", getLogout);
-
 export default Router;
-*/
