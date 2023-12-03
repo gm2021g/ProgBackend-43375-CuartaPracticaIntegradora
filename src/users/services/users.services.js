@@ -229,9 +229,8 @@ class UserServices {
     );
   };
 
-  updateUpload = async (uid, newDocument) => {
+  updateUpload = async (_id, newDocument) => {
     try {
-      //  console.log("comienza *********** ", newDocument);
       const user = await userModel.findById({ _id }).lean().exec();
 
       if (!user) {
@@ -242,11 +241,8 @@ class UserServices {
 
         return;
       }
-      //   console.log("ENCONTRO USER *********** newDocument: ", newDocument);
-      return await userModel.updateOne(
-        { _id: uid },
-        { $push: { documents: newDocument } }
-      );
+
+      return await userModel.updateOne({ _id }, { $push: { documents: newDocument } });
     } catch (error) {
       console.log(error);
     }
