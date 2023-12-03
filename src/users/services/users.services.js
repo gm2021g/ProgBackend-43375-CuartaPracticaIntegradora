@@ -118,7 +118,7 @@ class UserServices {
     }
   };
 
-  changeRole = async (uid) => {
+  /*  changeRole = async (uid) => {
     try {
       const user = await this.findUserById(uid);
 
@@ -144,16 +144,78 @@ class UserServices {
         }
       );
 
-      /*  const result = await userModel.updateOne(
-        { _id: uid },
-        { role: user?.role === "USER" ? "PREMIUM" : "USER" }
-      );
-    */
       if (!result) return 1;
 
       return 2;
     } catch (error) {
       console.log(error);
+    }
+  };
+*/
+
+  changeRole = async (uid) => {
+    try {
+      const user = await this.findUserById(uid);
+
+      if (!user) {
+        CustomError.createError({
+          name: ERRORS_ENUM["USER NOT FOUND"],
+          message: ERRORS_ENUM["USER NOT FOUND"],
+        });
+      }
+
+      if (user?.role === "USER") {
+        const userDocuments = user?.documents.map((document) => {
+          console.log(document);
+
+          if (!document) {
+            CustomError.createError({
+              name: "DOCUMENT NOT FOUND",
+              message: "YOU DONT HAVE ANY DOCUMENT UPLOADED",
+            });
+          }
+
+          const result = path.parse(document.name).name;
+
+          console.log(result);
+
+          return result;
+        });
+
+        console.log(userDocuments);
+
+        if (
+          !userDocuments?.includes("identificación") &&
+          !userDocuments?.includes("comprobante de domicilio") &&
+          !userDocuments?.includes("comprobante de estado de cuenta")
+        ) {
+          CustomError.createError({
+            name: "Invalid Credentials",
+            message: "Must upload ",
+          });
+
+          return false;
+        }
+      }
+
+      const result = await userModel.updateOne(
+        { _id: uid },
+        {
+          role:
+            user.role === "USER"
+              ? "PREMIUM"
+              : user.role === "PREMIUM"
+              ? "USER"
+              : user.role,
+        }
+      );
+
+      if (!result) return false;
+
+      return true;
+    } catch (error) {
+      console.log(error);
+      return error;
     }
   };
 
@@ -165,6 +227,30 @@ class UserServices {
       },
       { new: true }
     );
+  };
+
+  updateUpload = async (uid, newDocument) => {
+    try {
+      console.log ('comienza *********** ', newDocument)
+      const user = await userModel.findById({ _id }).lean().exec();
+
+      if (!user) {
+        CustomError.createError({
+          name: ERRORS_ENUM["USER NOT FOUND"],
+          message: ERRORS_ENUM["USER NOT FOUND"],
+        });
+
+        return;
+      }
+      console.log ('FIN *********** ', newDocument)
+      return await userModel.updateOne(
+        { _id: uid },
+        { $push: { documents: newDocument } }
+      );
+      
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 

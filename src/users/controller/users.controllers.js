@@ -198,20 +198,21 @@ export const changeUserRole = async (req, res) => {
 
 export const uploadDocument = async (req, res) => {
   try {
+    console.log("1 uploadDocument *********** ", req.params);
     const { uid } = req.params;
 
     if (!req.files)
       return res.status(404).send({ message: "SOMETHING WENT WRONG" });
 
-    const filesValues = Object.values(req.files);
-
+    let filesValues = Object.values(req.files);
+    console.log("2 uploadDocument *********** ", filesValues);
     filesValues.map(async (arrayOfFiles) => {
       return arrayOfFiles.map(async (file) => {
         const newDocument = {
           name: file.originalname,
           reference: file.path,
         };
-
+        console.log("3 uploadDocument *********** ", uid);
         await UserService.updateUpload(uid, newDocument);
 
         return;
