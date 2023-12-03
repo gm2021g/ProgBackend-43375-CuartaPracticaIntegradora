@@ -3,7 +3,7 @@ import multer from "multer";
 const storage = multer.diskStorage({
   destination(req, file, callback) {
     const dir = `./src/public/${file.fieldname}`;
-console.log (`multer.js  ******** ${file.fieldname}`);
+
     switch (file.fieldname) {
       case "profiles":
         callback(null, dir);
