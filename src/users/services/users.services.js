@@ -5,6 +5,7 @@ import userModel from "../../models/user.model.js";
 import { generateToken } from "../../utils/jwt.js";
 import UserDto from "../dto/user.dto.js";
 import { sendSuscriptionMail } from "../../mailer/controller/mailer.controller.js";
+import path from "path";
 
 class UserServices {
   finAll = async () => {
@@ -118,7 +119,7 @@ class UserServices {
     }
   };
 
-  /*  changeRole = async (uid) => {
+  changeRole = async (uid) => {
     try {
       const user = await this.findUserById(uid);
 
@@ -126,10 +127,27 @@ class UserServices {
         return 1;
       }
 
-      console.log(user);
-
       if (user.role !== "USER" && user.role !== "PREMIUM") {
         return 0;
+      }
+
+      if (user?.role === "USER") {
+        const userDocuments = user?.documents.map((document) => {
+          if (!document) {
+            return 1;
+          }
+
+          const result = path.parse(document.name).name;
+          return result;
+        });
+
+        if (
+          !userDocuments?.includes("identificacion") &&
+          !userDocuments?.includes("comprobante de domicilio") &&
+          !userDocuments?.includes("comprobante de estado de cuenta")
+        ) {
+          return 3;
+        }
       }
 
       const result = await userModel.updateOne(
@@ -147,72 +165,6 @@ class UserServices {
       if (!result) return 1;
 
       return 2;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-*/
-
-  changeRole = async (uid) => {
-    try {
-      const user = await this.findUserById(uid);
-
-      if (!user) {
-        CustomError.createError({
-          name: ERRORS_ENUM["USER NOT FOUND"],
-          message: ERRORS_ENUM["USER NOT FOUND"],
-        });
-      }
-
-      if (user?.role === "USER") {
-        const userDocuments = user?.documents.map((document) => {
-          console.log(document);
-
-          if (!document) {
-            CustomError.createError({
-              name: "DOCUMENT NOT FOUND",
-              message: "YOU DONT HAVE ANY DOCUMENT UPLOADED",
-            });
-          }
-
-          const result = path.parse(document.name).name;
-
-          console.log(result);
-
-          return result;
-        });
-
-        console.log(userDocuments);
-
-        if (
-          !userDocuments?.includes("identificación") &&
-          !userDocuments?.includes("comprobante de domicilio") &&
-          !userDocuments?.includes("comprobante de estado de cuenta")
-        ) {
-          CustomError.createError({
-            name: "Invalid Credentials",
-            message: "Must upload ",
-          });
-
-          return false;
-        }
-      }
-
-      const result = await userModel.updateOne(
-        { _id: uid },
-        {
-          role:
-            user.role === "USER"
-              ? "PREMIUM"
-              : user.role === "PREMIUM"
-              ? "USER"
-              : user.role,
-        }
-      );
-
-      if (!result) return false;
-
-      return true;
     } catch (error) {
       console.log(error);
       return error;
@@ -242,7 +194,10 @@ class UserServices {
         return;
       }
 
-      return await userModel.updateOne({ _id }, { $push: { documents: newDocument } });
+      return await userModel.updateOne(
+        { _id },
+        { $push: { documents: newDocument } }
+      );
     } catch (error) {
       console.log(error);
     }

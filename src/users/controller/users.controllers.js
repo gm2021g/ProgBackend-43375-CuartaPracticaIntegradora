@@ -171,7 +171,7 @@ export const postRestoreForm = async (req, res) => {
 
 export const changeUserRole = async (req, res) => {
   try {
-    //console.log("changeUserRole ", req.params);
+    console.log("changeUserRole ****", req.params);
     const { uid } = req.params;
 
     const result = await UserService.changeRole(uid);
@@ -183,6 +183,11 @@ export const changeUserRole = async (req, res) => {
     } else if (result === 0) {
       CustomError.createError({
         message: ERRORS_ENUM["ADMIN CANT CHANGE THE ROLE"],
+      });
+    }
+    else if (result === 3) {
+      CustomError.createError({
+        message: ERRORS_ENUM["Must upload documents"],
       });
     }
 
