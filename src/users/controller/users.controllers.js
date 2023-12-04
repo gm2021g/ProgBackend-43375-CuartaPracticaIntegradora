@@ -171,7 +171,6 @@ export const postRestoreForm = async (req, res) => {
 
 export const changeUserRole = async (req, res) => {
   try {
-    console.log("changeUserRole ****", req.params);
     const { uid } = req.params;
 
     const result = await UserService.changeRole(uid);
