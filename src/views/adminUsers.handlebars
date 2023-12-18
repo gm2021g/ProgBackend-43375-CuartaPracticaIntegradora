@@ -1,0 +1,43 @@
+<main>
+  <h2 class="welcome__message"> Admin Users </h2> 
+  <hr> <br>
+
+  <h3> Delete users who have been inactive for more than two days </h3>
+    <div>
+      <button     
+        class="product__detail__button"
+        id="deleteUserInactivity__btn">
+        Delete inactive users
+      </button>
+    </div>
+  <br>
+  <br>
+  <hr>
+  <br>
+
+  <h3> List of Users </h3>
+  <br>
+  <br>
+  {{#if users}}      
+    {{#each this.users}}  
+       <div>
+          <p>First name: {{first_name}} </p>
+          <p>Last name: {{last_name}} </p>
+          <p>Role: {{role}} </p>
+          <p>Last connection: {{last_connection}} </p>
+        </div>
+      </div>
+      <br>
+      <button class="product__detail__button">
+      <a href="/api/users/{{_id}}"> Modify User </a>
+      </button>
+      <br>
+      <br>
+      <hr>
+      <br>
+    {{/each}}
+    <br>
+  {{/if}}
+
+</main>
+<script src="/js/process.js"></script>

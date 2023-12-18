@@ -13,6 +13,7 @@ import {
   postRestoreForm,
   changeUserRole,
   uploadDocument,
+  deleteAllUsersInactivity,
 } from "../controller/users.controllers.js";
 
 const Router = express.Router();
@@ -44,6 +45,8 @@ Router.post("/restore", postRestore);
 Router.get("/restoreForm/:uid/:token", getRestoreForm);
 
 Router.post("/restoreForm/:uid/:token", postRestoreForm);
+
+Router.delete("/delete", deleteAllUsersInactivity);
 
 Router.post(
   "/:uid/documents",
